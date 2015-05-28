@@ -1,4 +1,4 @@
-# GitLegistique.jl -- Convert Git diffs of law to french wordings
+# GitLegistique.jl -- Convert Git diffs of french law to legislative drafting
 # By: Emmanuel Raviart <emmanuel.raviart@data.gouv.fr>
 #
 # Copyright (C) 2015 Etalab
