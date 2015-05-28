@@ -166,6 +166,10 @@ function line_index_to_paragraph_index(article::ParsedArticle, line_index::Int)
     # When line index is -1 or 0, paragraph index is the same.
     return line_index
   end
+  if line_index <= 2
+    # When line index is 1 or 2, this is the article title, not a paragraph.
+    return 0
+  end
   for (paragraph_index, paragraph_lines_range) in enumerate(article.paragraphs_lines_range)
     if paragraph_lines_range.start <= line_index <= paragraph_lines_range.stop
       return paragraph_index
