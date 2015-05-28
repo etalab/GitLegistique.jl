@@ -1,23 +1,25 @@
 # GitLegistique
 
-Convert Git diffs of French law articles to legislative drafting ("amendements" in French).
+Convert Git diffs of French law (in Markdown format) to legislative drafting ("légistique" in French).
 
-Trying to follow http://www.legifrance.gouv.fr/Droit-francais/Guide-de-legistique
+Trying to follow: http://www.legifrance.gouv.fr/Droit-francais/Guide-de-legistique
 
-[![Build Status](https://travis-ci.org/etalab/GitLegistique.jl.svg?branch=master)](https://travis-ci.org/etalab/GitLegistique.jl)
+This script is highly experimental.
+
+<!-- [![Build Status](https://travis-ci.org/etalab/GitLegistique.jl.svg?branch=master)](https://travis-ci.org/etalab/GitLegistique.jl) -->
 
 # Requirements
 
 - [Julia language](http://julialang.org/)
-- https://github.com/steeve/france.code-civil (branch "everything")
+- [French codes of law converted to Git/Markdown format by Steeve Morin](https://github.com/steeve/france.code-civil) (branch "everything")
 
 # Example
 
-Generate an "amendement" between the n-5 commit and the last one:
+Generate the legislative drafting of the difference between the n-5 commit and the latest one:
 
-    julia src/GitLegistique.jl -o HEAD~5 -n HEAD /path/to/france.code-civil/ Amendement1.md
+    julia src/GitLegistique.jl -o HEAD~5 -n HEAD /path/to/france.code-civil/ amendement1.md
 
-This outputs:
+This creates the `amendement1.md` file containing something like:
 
 ```markdown
 Article 1
