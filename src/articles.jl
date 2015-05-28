@@ -118,7 +118,7 @@ function body(article::ModifyArticle)
         article.old_paragraphs_range.start,
         " de l'article ",
         number(article.old_article),
-        " est remplacé par les disposition suivantes :",
+        " est remplacé par les dispositions suivantes :",
       ))
     else
       push!(paragraphs, string(
@@ -128,7 +128,7 @@ function body(article::ModifyArticle)
         article.old_paragraphs_range.stop,
         " de l'article ",
         number(article.old_article),
-        " sont remplacés par les disposition suivantes :",
+        " sont remplacés par les dispositions suivantes :",
       ))
     end
     append!(paragraphs,
