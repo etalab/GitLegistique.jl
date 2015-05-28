@@ -19,7 +19,7 @@ Generate an "amendement" between the n-2 commit and the last one:
 
 This outputs:
 
-```
+```markdown
 Article 1
 ----
 L'alinéa 3 de l'article L758-1 est remplacé par les disposition suivantes :
