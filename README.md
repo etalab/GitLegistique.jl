@@ -22,7 +22,7 @@ This outputs:
 ```markdown
 Article 1
 ----
-L'alinéa 3 de l'article L758-1 est remplacé par les disposition suivantes :
+L'alinéa 3 de l'article L758-1 est remplacé par les dispositions suivantes :
 
 « Lorsque le conseil d'administration de la Fondation nationale des sciences
 politiques examine le budget de l'Institut d'études politiques de Paris et fixe
