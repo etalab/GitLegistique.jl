@@ -128,7 +128,6 @@ function main()
     push!(optimized_articles, article)
   end
 
-
   open(args["output_file"], "w") do output_file
     println(output_file, join(
       map(index_and_article -> text(index_and_article[2], index_and_article[1]), enumerate(optimized_articles)),

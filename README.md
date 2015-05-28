@@ -27,6 +27,7 @@ Article 1
 Les articles A751-1, A751-10, A751-11, A751-12, A751-2, A751-3, A751-4, A751-5,
 A751-6, A751-7, A751-8 et A751-9 sont abrogés.
 
+
 Article 2
 ----
 L'alinéa 3 de l'article L758-1 est remplacé par les dispositions suivantes :
