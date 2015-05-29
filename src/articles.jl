@@ -113,13 +113,66 @@ function body(article::ModifyArticle)
   else
     # Modify paragraphs.
     if article.old_paragraphs_range.start == article.old_paragraphs_range.stop
-      push!(paragraphs, string(
-        "L'alinéa ",
-        article.old_paragraphs_range.start,
-        " de l'article ",
-        number(article.old_article),
-        " est remplacé par les dispositions suivantes :",
-      ))
+      if article.new_paragraphs_range.start == article.new_paragraphs_range.stop
+        # A single paragraph has been modified.
+        # Detect whether paragraph modifications are subsequent.
+        old_paragraph = article.old_article.text[article.old_article.paragraphs_chars_range[
+          article.old_paragraphs_range.start]]
+        new_paragraph = article.new_article.text[article.new_article.paragraphs_chars_range[
+          article.new_paragraphs_range.start]]
+        old_words = split(old_paragraph)
+        new_words = split(new_paragraph)
+        same_first_words_count = findfirst(collect(zip(old_words, new_words))) do old_word_and_new_word
+          old_word, new_word = old_word_and_new_word
+          return old_word != new_word
+        end - 1
+        same_last_words_count = findfirst(collect(zip(reverse(old_words), reverse(new_words)))) do old_word_and_new_word
+          old_word, new_word = old_word_and_new_word
+          return old_word != new_word
+        end - 1
+        if same_first_words_count + same_last_words_count > length(old_words) / 2
+          # The two versions of the paragraph share a significant proportion of words.
+          old_different_words = old_words[1 + same_first_words_count:end - same_last_words_count]
+          new_different_words = new_words[1 + same_first_words_count:end - same_last_words_count]
+          push!(paragraphs, string(
+            "À l'alinéa ",
+            article.old_paragraphs_range.start,
+            " de l'article ",
+            number(article.old_article),
+            " les mots « ",
+            join(old_different_words, ' '),
+            " » sont remplacés par les mots « ",
+            join(new_different_words, ' '),
+            " ».",
+          ))
+        else
+          push!(paragraphs, string(
+            "L'alinéa ",
+            article.old_paragraphs_range.start,
+            " de l'article ",
+            number(article.old_article),
+            " est remplacé par les dispositions suivantes :",
+          ))
+          append!(paragraphs,
+            map(paragraph_index -> article.new_article.text[article.new_article.paragraphs_chars_range[paragraph_index]],
+              article.new_paragraphs_range))
+          paragraphs[2] = "« $(paragraphs[2])"
+          paragraphs[end] = "$(paragraphs[end]) »"
+        end
+      else
+        push!(paragraphs, string(
+          "L'alinéa ",
+          article.old_paragraphs_range.start,
+          " de l'article ",
+          number(article.old_article),
+          " est remplacé par les dispositions suivantes :",
+        ))
+        append!(paragraphs,
+          map(paragraph_index -> article.new_article.text[article.new_article.paragraphs_chars_range[paragraph_index]],
+            article.new_paragraphs_range))
+        paragraphs[2] = "« $(paragraphs[2])"
+        paragraphs[end] = "$(paragraphs[end]) »"
+      end
     else
       push!(paragraphs, string(
         "Les alinéas ",
@@ -130,12 +183,12 @@ function body(article::ModifyArticle)
         number(article.old_article),
         " sont remplacés par les dispositions suivantes :",
       ))
+      append!(paragraphs,
+        map(paragraph_index -> article.new_article.text[article.new_article.paragraphs_chars_range[paragraph_index]],
+          article.new_paragraphs_range))
+      paragraphs[2] = "« $(paragraphs[2])"
+      paragraphs[end] = "$(paragraphs[end]) »"
     end
-    append!(paragraphs,
-      map(paragraph_index -> article.new_article.text[article.new_article.paragraphs_chars_range[paragraph_index]],
-        article.new_paragraphs_range))
-    paragraphs[2] = "« $(paragraphs[2])"
-    paragraphs[end] = "$(paragraphs[end]) »"
   end
   return string(join(map(paragraph -> wrap(rstrip(paragraph); width = 80), paragraphs), "\n\n"), '\n')
 end
