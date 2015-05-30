@@ -17,7 +17,7 @@ This script is highly experimental.
 
 Generate the legislative drafting of the difference between the n-5 commit and the latest one:
 
-    julia src/GitLegistique.jl -o HEAD~5 -n HEAD /path/to/france.code-civil/ amendement1.md
+    julia src/GitLegistique.jl -o HEAD~10 -n HEAD /path/to/france.code-civil/ amendement1.md
 
 This creates the `amendement1.md` file containing something like:
 
@@ -27,47 +27,75 @@ Article 1
 Les articles A751-1, A751-10, A751-11, A751-12, A751-2, A751-3, A751-4, A751-5,
 A751-6, A751-7, A751-8 et A751-9 sont abrogés.
 
-
-Article 2
-----
-L'alinéa 3 de l'article L758-1 est remplacé par les dispositions suivantes :
-
-« Lorsque le conseil d'administration de la Fondation nationale des sciences
-politiques examine le budget de l'Institut d'études politiques de Paris et fixe
-les droits de scolarité pour les formations menant à des diplômes propres de
-l'établissement, des représentants des étudiants élus au conseil de direction de
-l'institut y participent avec voix délibérative. »
+[...]
 
 
 Article 3
 ----
-L'alinéa 1 de l'article R821-5 est remplacé par les dispositions suivantes :
+L'alinéa 24 de l'article R217-3 est remplacé par les dispositions suivantes :
 
-« L'allocation aux adultes handicapés prévue à l'article L. 821-1 et le
-complément de ressources prévu à l'article L. 821-1-1 sont accordés par la
-commission des droits et de l'autonomie des personnes handicapées pour une
-période au moins égale à un an et au plus égale à cinq ans. Si le handicap n'est
-pas susceptible d'une évolution favorable, la période d'attribution de
-l'allocation et la période d'attribution du complément de ressources peuvent
-excéder cinq ans sans toutefois dépasser dix ans.
+« Toutefois, l'amende ne peut excéder 1 500 euros en cas de défaut de
+présentation des documents exigibles par la réglementation. Ces plafonds peuvent
+être doublés en cas de nouveau manquement de même nature commis dans le délai
+d'un an à compter de la notification de la décision du préfet ;
 
-L'allocation aux adultes handicapés prévue à l'article L. 821-2 est accordée par
-ladite commission pour une période de un à deux ans. La période d'attribution de
-l'allocation peut excéder deux ans sans toutefois dépasser cinq ans, si le
-handicap et la restriction substantielle et durable pour l'accès à l'emploi
-prévue au troisième alinéa de cet article ne sont pas susceptibles d'une
-évolution favorable au cours de la période d'attribution. »
+j) Des mesures restrictives d'exploitation ou des mesures correctives ou de
+nature à compenser la non-conformité relevée, prévues au VI de l'article R.
+213-7 du code de l'aviation civile, »
 
 
 Article 4
 ----
-L'alinéa 12 de l'article D821-1-2 est remplacé par les dispositions suivantes :
+Il est inséré un article R330-12-2 ainsi rédigé :
 
-« 3° La restriction est durable dès lors qu'elle est d'une durée prévisible d'au
-moins un an à compter du dépôt de la demande d'allocation aux adultes
-handicapés, même si la situation médicale du demandeur n'est pas stabilisée. La
-restriction substantielle et durable pour l'accès à l'emploi est reconnue pour
-une durée de un à cinq ans. »
+« Art. R330-12-2 – I. - En cas de menace pour la sécurité nationale présentant à
+la fois un caractère d'urgence et de particulière gravité, le ministre chargé de
+l'aviation civile peut suspendre, pour une durée qui ne peut excéder un mois,
+l'autorisation d'exploiter des services de transport aérien entre un aérodrome
+étranger et le territoire national, accordée à une entreprise de transport
+aérien en application de l'article R. 330-6 du code de l'aviation civile.
 
-[... skipped ...]
+II. - Dans les mêmes circonstances, le préfet de région du lieu du principal
+établissement de l'entreprise de transport aérien peut suspendre, pour une durée
+qui ne peut excéder un mois, l'autorisation d'exploiter des services de
+transport aérien entre un aérodrome étranger et le territoire national, accordée
+à cette entreprise en application de l'article R. 330-19-1 du code de l'aviation
+civile. »
+
+
+Article 5
+----
+À l'alinéa 3 de l'article L758-1, le mot « cinq » est remplacé par le mot
+« des ».
+
+
+Article 6
+----
+À l'alinéa 1 de l'article D423-12, les mots « selon le mode de comptabilisation
+des ressources affectées » sont supprimés.
+
+[...]
+
+
+Article 10
+----
+À l'alinéa 1 de l'article L2323-17, après les mots « aux contrats de travail à
+durée déterminée », sont insérés les mots « , aux contrats conclus avec une
+entreprise de portage salarial ».
+
+[...]
+
+
+Article 63
+----
+À l'alinéa 1 de l'article L1615-2, après le mot « communes », est inséré le
+caractère « , ».
+
+
+Article 64
+----
+À l'alinéa 16 de l'article L3642-2, les mots « article L. 511-1 » sont remplacés
+par les mots « article L. 511-2 ».
+
+[...]
 ```
