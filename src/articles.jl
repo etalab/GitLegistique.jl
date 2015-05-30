@@ -120,8 +120,8 @@ function body(article::ModifyArticle)
           article.old_paragraphs_range.start]]
         new_paragraph = article.new_article.text[article.new_article.paragraphs_chars_range[
           article.new_paragraphs_range.start]]
-        old_words = split(old_paragraph)
-        new_words = split(new_paragraph)
+        old_words = parse_words(old_paragraph)
+        new_words = parse_words(new_paragraph)
         same_first_words_count = findfirst(collect(zip(old_words, new_words))) do old_word_and_new_word
           old_word, new_word = old_word_and_new_word
           return old_word != new_word
@@ -134,22 +134,70 @@ function body(article::ModifyArticle)
           # The two versions of the paragraph share a significant proportion of words.
           old_different_words = old_words[1 + same_first_words_count:end - same_last_words_count]
           new_different_words = new_words[1 + same_first_words_count:end - same_last_words_count]
-          push!(paragraphs, string(
+          paragraph = string(
             "À l'alinéa ",
             article.old_paragraphs_range.start,
             " de l'article ",
             number(article.old_article),
-            length(old_different_words) > 1 ? " les mots " : " le mot ",
-            "« ",
-            join(old_different_words, ' '),
-            " »",
-            length(old_different_words) > 1 ? " sont remplacés " : " est remplacé ",
-            "par",
-            length(new_different_words) > 1 ? " les mots " : " le mot ",
-            "« ",
-            join(new_different_words, ' '),
-            " ».",
-          ))
+            ",",
+          )
+          if isempty(old_different_words) || count(old_paragraph, strip(join(old_different_words))) > 1
+            old_previous_word_index = same_first_words_count
+            old_previous_words = Union(Char, String)[]
+            while old_previous_word_index > 0
+              unshift!(old_previous_words, old_words[old_previous_word_index])
+              old_previous = strip(join(old_previous_words))
+              if !isempty(old_previous) && count(old_paragraph, old_previous) <= 1
+                break
+              end
+              old_previous_word_index -= 1
+            end
+            if old_previous_word_index == 0
+              paragraph *= " au début,"
+            end
+            if !isempty(old_previous_words)
+              paragraph *= string(
+                " après",
+                length(old_previous_words) > 1 ? " les mots " :
+                  isa(old_previous_words[1], Char) ? " le caractère " : " le mot ",
+                "« ",
+                strip(join(old_previous_words)),
+                " »,",
+              )
+            end
+          end
+          if isempty(old_different_words)
+            @assert !isempty(new_different_words)
+            paragraph *= string(
+              length(new_different_words) > 1 ? " sont insérés les mots " :
+                isa(new_different_words[1], Char) ? " est inséré le caractère " : " est inséré le mot ",
+              "« ",
+              strip(join(new_different_words)),
+              " ».",
+            )
+          else
+            paragraph *= string(
+              length(old_different_words) > 1 ? " les mots " :
+                isa(old_different_words[1], Char) ? " le caractère " : " le mot ",
+              "« ",
+              strip(join(old_different_words)),
+              " »",
+            )
+            if isempty(new_different_words)
+              paragraph *= length(old_different_words) > 1 ? " sont supprimés." : " est supprimé."
+            else
+              paragraph *= string(
+                length(old_different_words) > 1 ? " sont remplacés " : " est remplacé ",
+                "par",
+                length(new_different_words) > 1 ? " les mots " :
+                  isa(new_different_words[1], Char) ? " le caractère " : " le mot ",
+                "« ",
+                strip(join(new_different_words)),
+                " ».",
+              )
+            end
+          end
+          push!(paragraphs, paragraph)
         else
           push!(paragraphs, string(
             "L'alinéa ",
@@ -219,6 +267,34 @@ function char_index_to_paragraph_index(article::ParsedArticle, char_index::Int)
 end
 
 
+function count(s::String, sub::Char)
+  c = -1
+  index = 0
+  while true
+    c += 1
+    index = search(s, sub, index + 1)
+    if index == 0
+      break
+    end
+  end
+  return  c
+end
+
+function count(s::String, sub::String)
+  c = -1
+  index = 0
+  while true
+    c += 1
+    range = search(s, sub, index + 1)
+    if range.stop == -1
+      break
+    end
+    index = range.start
+  end
+  return  c
+end
+
+
 function line_index_to_paragraph_index(article::ParsedArticle, line_index::Int)
   if line_index <= 0
     # When line index is -1 or 0, paragraph index is the same.
@@ -229,7 +305,8 @@ function line_index_to_paragraph_index(article::ParsedArticle, line_index::Int)
     return 0
   end
   for (paragraph_index, paragraph_lines_range) in enumerate(article.paragraphs_lines_range)
-    if paragraph_lines_range.start <= line_index <= paragraph_lines_range.stop
+    # The "+ 1" below is because an empty line belongs to the previous paragraph.
+    if paragraph_lines_range.start <= line_index <= paragraph_lines_range.stop + 1
       return paragraph_index
     end
   end
@@ -240,7 +317,7 @@ end
 number(article::ParsedArticle) = article.text[article.number_chars_range]
 
 
-function parse_article(text)
+function parse_article(text::String)
   line1, line2, body = split(text, "\n", 3)
   @assert startswith(line1, "Article ")
   number_str = line1[sizeof("Article ") + 1:end]
@@ -253,14 +330,44 @@ function parse_article(text)
     paragraph_chars_stop_index = paragraph_separator_range.start > 0 ?
       paragraph_separator_range.start - 1 :
       sizeof(rstrip(text))
-    paragraph_lines_stop_index = paragraph_lines_start_index + count(char -> char == '\n',
-      text[paragraph_chars_start_index:paragraph_chars_stop_index])
+    paragraph_lines_stop_index = paragraph_lines_start_index + count(
+      text[paragraph_chars_start_index:paragraph_chars_stop_index], '\n')
     push!(article.paragraphs_chars_range, paragraph_chars_start_index:paragraph_chars_stop_index)
     push!(article.paragraphs_lines_range, paragraph_lines_start_index:paragraph_lines_stop_index)
     paragraph_chars_start_index = paragraph_chars_stop_index + 3
     paragraph_lines_start_index = paragraph_lines_stop_index + 2
   end
   return article
+end
+
+
+function parse_words(paragraph::String)
+  # Separate words, spaces & punctuation.
+  fragments = Union(Char, String)[]
+  word = ""
+  for c in paragraph
+    if isspace(c)
+      if !isempty(word)
+        push!(fragments, word)
+        word = ""
+      end
+      if isempty(fragments) || fragments[end] != ' '
+        push!(fragments, ' ')
+      end
+    elseif ispunct(c)
+      if !isempty(word)
+        push!(fragments, word)
+        word = ""
+      end
+      push!(fragments, c)
+    else
+      word *= string(c)
+    end
+  end
+  if !isempty(word)
+    push!(fragments, word)
+  end
+  return fragments
 end
 
 
